@@ -75,14 +75,16 @@ class BaseModel(object):
                 if indicate == "fine_tuning":
                     print([v.name for v in tf.trainable_variables()])
                     grads = optimizer.compute_gradients(loss, [v for v in tf.trainable_variables()
-                                                               if v.name == "words/_word_embeddings:0"])
+                                                               if v.name == "words/_word_level_embeddings:0"
+                                                               or v.name == "entity/_entity_embeddings:0"])
                     # opt_vars = [v for v in tf.trainable_variables() if v.name == "words/_word_embeddings:0"]
                     # print(opt_vars)
                     # self.train_op = optimizer.minimize(loss, var_list=opt_vars)
                 elif indicate==None:
                     # self.train_op = optimizer.minimize(loss, var_list=[v for v in tf.trainable_variables() if v.name == "words/_word_embeddings:0"])
                     grads = optimizer.compute_gradients(loss, [v for v in tf.trainable_variables()
-                                                               if v.name != "words/_word_embeddings:0"])
+                                                               if v.name != "words/_word_level_embeddings:0"
+                                                               and v.name != "entity/_entity_embeddings:0"])
                 self.train_op = optimizer.apply_gradients(grads)
 
 
@@ -93,7 +95,8 @@ class BaseModel(object):
         self.sess = tf.Session()
         self.sess.run(tf.global_variables_initializer())
         if indicate == "fine_tuning":
-            vars_restore = [v for v in tf.trainable_variables() if v.name != "words/_word_embeddings:0"]
+            vars_restore = [v for v in tf.trainable_variables() if v.name != "words/_word_level_embeddings:0"
+                                                                    and v.name != "entity/_entity_embeddings:0"]
             self.saver = tf.train.Saver(vars_restore)
         else:
             self.saver = tf.train.Saver()
