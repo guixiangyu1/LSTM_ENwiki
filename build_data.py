@@ -1,7 +1,8 @@
 from model.config import Config
 from model.data_utils import CoNLLDataset1, get_vocabs, UNK, NUM, \
     get_glove_vocab, write_vocab, load_vocab, get_char_vocab, \
-    export_trimmed_glove_vectors, get_processing_word, entity2vocab
+    export_trimmed_glove_vectors, get_processing_word, entity2vocab,\
+    get_entity_vocab
 
 
 def main():
@@ -31,13 +32,14 @@ def main():
     # Build Word and Tag vocab
     vocab_words, vocab_tags = get_vocabs([train, dev, test])   # word词表， tags表
     vocab_glove = get_glove_vocab(config.filename_glove)       # glove词表
+    vocab_entity = get_entity_vocab(config.filename_entity)
 
 
-    vocab = vocab_words & vocab_glove                          # & 求交集  set，都是集合
+    vocab = (vocab_words & vocab_glove) | vocab_entity                          # & 求交集  set，都是集合
     vocab.add(UNK)
     vocab.add(NUM)                                             # 手动添加
 
-    vocab = entity2vocab(config.filename_entity2num, vocab=vocab)
+    # vocab = entity2vocab(config.filename_entity2num, vocab=vocab)
 
     # Save vocab
     write_vocab(vocab, config.filename_words)
@@ -46,7 +48,7 @@ def main():
     # Trim GloVe Vectors
     vocab = load_vocab(config.filename_words)    # 得到dict类型的vocab：{word:index}
     # 针对vocab，生成numpy的embedding文件，包含一个矩阵，对应词嵌入
-    export_trimmed_glove_vectors(vocab, config.filename_glove,
+    export_trimmed_glove_vectors(vocab, config.filename_glove, config.filename_entity,
                                 config.filename_trimmed, config.dim_word)
 
 

@@ -66,11 +66,11 @@ class Config():
     dim_char = 100
 
     # glove files
-    filename_glove = "data/WikipediaClean5FineTunedGlove6B"
+    filename_glove = "data/enwiki_20180420_300d.txt"
     # trimmed embeddings (created from glove_filename with build_data.py)
-    filename_trimmed = "data/WikipediaClean5FineTunedGlove6B.npz"
+    filename_trimmed = "data/enwiki_20180420_300d.npz"
 
-    filename_entity2num = "data/num_entity_distance5.txt"
+    filename_entity = "data/enwiki_match_litter.txt"
     use_pretrained = True
 
     # dataset

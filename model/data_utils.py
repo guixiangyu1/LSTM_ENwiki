@@ -217,7 +217,7 @@ class CoNLLDataset(object):
                     tag_pre = tag.split('-')[0]
                     tag_suf = tag.split('-')[-1]
                     if tag_pre == 'I':
-                        chunk = chunk + word + "$@&"
+                        chunk = chunk + ' ' + word
                     else:
                         if len(chunk) != 0:
 
@@ -229,7 +229,7 @@ class CoNLLDataset(object):
                         # else:
                         #     chunk = word + "$@&"
                         if tag_pre == 'B':
-                            chunk = word + "$@&"
+                            chunk = "ENTITY/" + word
                             mask += [True]
                             tags += [self.processing_tag(tag_suf)]
                         else:
@@ -253,16 +253,7 @@ class CoNLLDataset(object):
 
 
 
-def entity_in_dataset(filename):
-    entity2num = {}
-    with open(filename) as f:
-        for line in f:
-            line = line.strip()
-            if len(line)!=0:
-                word = line.split(',,,')[0]
-                entity_num = line.split(',,,')[-2]
-                entity2num[word] = entity_num
-    return  entity2num
+
 
 def get_vocabs(datasets):
     """Build vocabulary from an iterable of datasets objects
@@ -356,10 +347,22 @@ def get_glove_vocab(filename):
     """
     print("Building vocab...")
     vocab = set()
-    with open(filename,"rb") as f:
+    with open(filename) as f:
         for line in f:
             word = line.strip().split(' ')[0]
             vocab.add(word)
+    print("- done. {} tokens".format(len(vocab)))
+    return vocab
+
+def get_entity_vocab(filename):
+    print("Build Entity Vocab")
+    vocab = set()
+    with open(filename) as f:
+        for line in f:
+            entity = line.strip().split(",,,")[0]
+            # if line.strip().endswith("None")
+            entity = "ENTITY/" + entity
+            vocab.add(entity)
     print("- done. {} tokens".format(len(vocab)))
     return vocab
 
@@ -409,7 +412,7 @@ def load_vocab(filename):
     return d
 
 
-def export_trimmed_glove_vectors(vocab, glove_filename, trimmed_filename, dim):
+def export_trimmed_glove_vectors(vocab, glove_filename, entity_filename, trimmed_filename, dim):
     """Saves glove vectors in numpy array
 
     Args:
@@ -429,6 +432,16 @@ def export_trimmed_glove_vectors(vocab, glove_filename, trimmed_filename, dim):
             if word in vocab:
                 word_idx = vocab[word]
                 embeddings[word_idx] = np.asarray(embedding)
+
+    with open(entity_filename) as f:
+        for line in f:
+            line = line.strip().split(',,,')
+            word = "ENTITY/" + line[0]
+            word_idx = vocab[word]
+            if line[-1] != "None" :
+                embedding = [float(x) for x in line[-2].strip("[]").split(', ')]
+                embeddings[word_idx] = np.asarray(embedding)
+
 
     # for keyword in vocab:
     #     embedding_total = []
@@ -475,13 +488,13 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
                  = (list of char ids, word id)
 
     """
-    entity2num = entity_in_dataset("data/num_entity_distance5.txt")  # all entity_wiki {index_num:word}
+    # entity2num = entity_in_dataset("data/num_entity_distance5.txt")  # all entity_wiki {index_num:word}
 
     def f(word):
         # 0. get chars of words
         if vocab_chars is not None and chars == True:
             char_ids = []
-            entity_words = word.replace("$@&",' ').strip().split("$@&")
+            entity_words = word.replace("ENTITY/",'').split(" ")
             for entity_word in entity_words:
                 for char in entity_word:
                     # ignore chars out of vocabulary
@@ -491,29 +504,23 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
         # 1. preprocess word
         if lowercase:
             word = word.lower()
+            if word.startswith("entity/"):
+                word.replace("entity/", "ENTITY/")
         if word.isdigit():
             word = NUM
 
         # 2. get id of word
         if vocab_words is not None:
-            if "$@&" in word:
-                # print(word)
-                entity = word.replace("$@&", " ").strip()
 
-                num = entity2num[entity]
-                if num.isdigit():
-                    word = vocab_words[num]
-                else:
-                    word = vocab_words[UNK]
+            if word in vocab_words:
+                word = vocab_words[word]
             else:
-                if word in vocab_words:
-                    word = vocab_words[word]
+                if allow_unk:
+                    word = vocab_words[UNK]
                 else:
-                    if allow_unk:
-                        word = vocab_words[UNK]
-                    else:
-                        raise Exception("Unknow key is not allowed. Check that "\
-                                        "your vocab (tags?) is correct")
+                    raise Exception("Unknow key is not allowed. Check that " \
+                                    "your vocab (tags?) is correct")
+
 
         # 3. return tuple char ids, word id
         if vocab_chars is not None and chars == True:
