@@ -459,6 +459,7 @@ def export_trimmed_glove_vectors(vocab, glove_filename, entity_filename, trimmed
                 embedding += [embeddings[idx]]
             word_idx = vocab["ENTITY/"+words]
             embeddings[word_idx] = np.mean(embedding, axis=0)
+
     np.savez_compressed(trimmed_filename_word, embeddings=embeddings)
 
 

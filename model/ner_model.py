@@ -140,7 +140,7 @@ class NERModel(BaseModel):
         with tf.variable_scope("word"):
             if self.config.use_word_level_embedding:
                 _word_level_embeddings = tf.Variable(
-                    self.config.embeddings,
+                    self.config.word_level_embeddings,
                     name="_word_level_embeddings",
                     dtype=tf.float32)
 

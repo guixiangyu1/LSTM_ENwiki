@@ -54,7 +54,7 @@ class Config():
         # 3. get pre-trained embeddings 获取embeddings这个矩阵
         self.entity_embeddings = (get_trimmed_glove_vectors(self.filename_trimmed_entity)
                 if self.use_pretrained else None)
-        self.word_level_embedding = get_trimmed_glove_vectors(self.filename_trimmed_word)
+        self.word_level_embeddings = get_trimmed_glove_vectors(self.filename_trimmed_word)
 
 
 
