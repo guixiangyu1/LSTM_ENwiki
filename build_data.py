@@ -49,7 +49,8 @@ def main():
     vocab = load_vocab(config.filename_words)    # 得到dict类型的vocab：{word:index}
     # 针对vocab，生成numpy的embedding文件，包含一个矩阵，对应词嵌入
     export_trimmed_glove_vectors(vocab, config.filename_glove, config.filename_entity,
-                                config.filename_trimmed, config.dim_word)
+                                config.filename_trimmed_entity, config.filename_trimmed_word, config.dim_word)
+
 
 
     # Build and save char vocab   生成字母表, 这里没用到小写化的东西。只有文件本身。

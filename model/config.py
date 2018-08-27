@@ -52,8 +52,10 @@ class Config():
                 lowercase=False, allow_unk=False)
 
         # 3. get pre-trained embeddings 获取embeddings这个矩阵
-        self.embeddings = (get_trimmed_glove_vectors(self.filename_trimmed)
+        self.entity_embeddings = (get_trimmed_glove_vectors(self.filename_trimmed_entity)
                 if self.use_pretrained else None)
+        self.word_level_embedding = get_trimmed_glove_vectors(self.filename_trimmed_word)
+
 
 
     # general config
@@ -63,12 +65,14 @@ class Config():
 
     # embeddings
     dim_word = 300
+    dim_entity = 300
     dim_char = 100
 
     # glove files
     filename_glove = "data/enwiki_20180420_300d.txt"
     # trimmed embeddings (created from glove_filename with build_data.py)
-    filename_trimmed = "data/enwiki_20180420_300d.npz"
+    filename_trimmed_entity = "data/enwiki_20180420_300d_entity.npz"
+    filename_trimmed_word   = "data/enwiki_20180420_300d_word.npz"
 
     filename_entity = "data/enwiki_match_litter.txt"
     use_pretrained = True
@@ -106,3 +110,4 @@ class Config():
     # NOTE: if both chars and crf, only 1.6x slower on GPU
     use_crf = False # if crf, training is 1.7x slower on CPU
     use_chars = True # if char embedding, training is 3.5x slower on CPU
+    use_word_level_embedding = True

@@ -412,7 +412,8 @@ def load_vocab(filename):
     return d
 
 
-def export_trimmed_glove_vectors(vocab, glove_filename, entity_filename, trimmed_filename, dim):
+def export_trimmed_glove_vectors(vocab, glove_filename, entity_filename, trimmed_filename_entity,\
+                                 trimmed_filename_word, dim):
     """Saves glove vectors in numpy array
 
     Args:
@@ -441,6 +442,23 @@ def export_trimmed_glove_vectors(vocab, glove_filename, entity_filename, trimmed
             if line[-1] != "None" :
                 embedding = [float(x) for x in line[-2].strip("[]").split(', ')]
                 embeddings[word_idx] = np.asarray(embedding)
+    np.savez_compressed(trimmed_filename_entity, embeddings=embeddings)  # 压缩词嵌入到文件中，并且名字为embeddings
+
+    with open(entity_filename) as f:
+        for line in f:
+            embedding = []
+            line = line.strip().split(',,,')
+            words = line[0]
+            word_idx = vocab[word]
+            for word in words:
+                if word in vocab:
+                    idx = vocab[word]
+                else:
+                    idx = vocab[UNK]
+                embedding.append(embeddings[idx])
+            embeddings[word_idx] = np.mean(embedding, -1)
+    np.savez_compressed(trimmed_filename_word, embeddings=embeddings)
+
 
 
     # for keyword in vocab:
@@ -454,7 +472,7 @@ def export_trimmed_glove_vectors(vocab, glove_filename, entity_filename, trimmed
     #                 embedding_total.append(embeddings[word_idx])
     #                 embeddings[keyword_index] = np.mean(embedding_total, axis=0)
 
-    np.savez_compressed(trimmed_filename, embeddings=embeddings)    #压缩词嵌入到文件中，并且名字为embeddings
+
 
 
 def get_trimmed_glove_vectors(filename):

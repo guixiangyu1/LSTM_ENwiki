@@ -121,21 +121,34 @@ class NERModel(BaseModel):
         the correct shape is initialized.
         """
 
-        with tf.variable_scope("words"):
-            if self.config.embeddings is None:
-                self.logger.info("WARNING: randomly initializing word vectors")
-                _word_embeddings = tf.get_variable(
-                        name="_word_embeddings",
+        with tf.variable_scope("entity"):
+            if self.config.entity_embeddings is None:
+                self.logger.info("WARNING: randomly initializing entity vectors")
+                _entity_embeddings = tf.get_variable(
+                        name="_entity_embeddings",
                         dtype=tf.float32,
-                        shape=[self.config.nwords, self.config.dim_word])
+                        shape=[self.config.nwords, self.config.dim_entity])
             else:
-                _word_embeddings = tf.Variable(
-                        self.config.embeddings,
-                        name="_word_embeddings",
+                _entity_embeddings = tf.Variable(
+                        self.config.entity_embeddings,
+                        name="_entity_embeddings",
                         dtype=tf.float32)
             # 已经没有文字了，只有word_id
-            word_embeddings = tf.nn.embedding_lookup(_word_embeddings,
+            word_embeddings = tf.nn.embedding_lookup(_entity_embeddings,
                     self.word_ids, name="word_embeddings")
+
+        with tf.variable_scope("word"):
+            if self.config.use_word_level_embedding:
+                _word_level_embeddings = tf.Variable(
+                    self.config.embeddings,
+                    name="_word_level_embeddings",
+                    dtype=tf.float32)
+
+                word_level_embeddings = tf.nn.embedding_lookup(_word_level_embeddings,
+                    self.word_ids, name="word_level_embeddings")
+
+
+                word_embeddings = tf.concat([word_embeddings, word_level_embeddings], axis=-1)
 
 
 
