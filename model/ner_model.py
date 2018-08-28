@@ -121,21 +121,21 @@ class NERModel(BaseModel):
         the correct shape is initialized.
         """
 
-        # with tf.variable_scope("entity"):
-        #     if self.config.entity_embeddings is None:
-        #         self.logger.info("WARNING: randomly initializing entity vectors")
-        #         _entity_embeddings = tf.get_variable(
-        #                 name="_entity_embeddings",
-        #                 dtype=tf.float32,
-        #                 shape=[self.config.nwords, self.config.dim_entity])
-        #     else:
-        #         _entity_embeddings = tf.Variable(
-        #                 self.config.entity_embeddings,
-        #                 name="_entity_embeddings",
-        #                 dtype=tf.float32)
-        #     # 已经没有文字了，只有word_id
-        #     word_embeddings = tf.nn.embedding_lookup(_entity_embeddings,
-        #             self.word_ids, name="word_embeddings")
+        with tf.variable_scope("entity"):
+            if self.config.entity_embeddings is None:
+                self.logger.info("WARNING: randomly initializing entity vectors")
+                _entity_embeddings = tf.get_variable(
+                        name="_entity_embeddings",
+                        dtype=tf.float32,
+                        shape=[self.config.nwords, self.config.dim_entity])
+            else:
+                _entity_embeddings = tf.Variable(
+                        self.config.entity_embeddings,
+                        name="_entity_embeddings",
+                        dtype=tf.float32)
+            # 已经没有文字了，只有word_id
+            word_embeddings = tf.nn.embedding_lookup(_entity_embeddings,
+                    self.word_ids, name="word_embeddings")
 
         with tf.variable_scope("word"):
             if self.config.use_word_level_embedding:
@@ -148,9 +148,9 @@ class NERModel(BaseModel):
                     self.word_ids, name="word_level_embeddings")
 
 
-                # word_embeddings = tf.concat([word_embeddings, word_level_embeddings], axis=-1)
-                word_embeddings = tf.nn.embedding_lookup(_word_level_embeddings,
-                    self.word_ids, name="word_level_embeddings")
+                word_embeddings = tf.concat([word_embeddings, word_level_embeddings], axis=-1)
+                # word_embeddings = tf.nn.embedding_lookup(_word_level_embeddings,
+                #     self.word_ids, name="word_level_embeddings")
 
 
 
