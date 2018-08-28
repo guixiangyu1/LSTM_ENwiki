@@ -74,7 +74,7 @@ class Config():
     filename_trimmed_entity = "data/enwiki_20180420_300d_entity.npz"
     filename_trimmed_word   = "data/enwiki_20180420_300d_word.npz"
 
-    filename_entity = "data/enwiki_match_more.txt"
+    filename_entity = "data/enwiki_match_title.txt"
     use_pretrained = True
 
     # dataset
