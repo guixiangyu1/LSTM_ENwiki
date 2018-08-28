@@ -69,7 +69,7 @@ class Config():
     dim_char = 100
 
     # glove files
-    filename_glove = "data/enwiki_20180420_nolg_300d.txt"
+    filename_glove = "data/glove.6B.300d.txt"
     # trimmed embeddings (created from glove_filename with build_data.py)
     filename_trimmed_entity = "data/enwiki_20180420_300d_entity.npz"
     filename_trimmed_word   = "data/enwiki_20180420_300d_word.npz"
