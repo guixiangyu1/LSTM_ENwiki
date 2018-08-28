@@ -52,8 +52,8 @@ class Config():
                 lowercase=False, allow_unk=False)
 
         # 3. get pre-trained embeddings 获取embeddings这个矩阵
-        # self.entity_embeddings = (get_trimmed_glove_vectors(self.filename_trimmed_entity)
-        #         if self.use_pretrained else None)
+        self.entity_embeddings = (get_trimmed_glove_vectors(self.filename_trimmed_entity)
+                if self.use_pretrained else None)
         self.word_level_embeddings = get_trimmed_glove_vectors(self.filename_trimmed_word)
 
 
@@ -71,7 +71,7 @@ class Config():
     # glove files
     filename_glove = "data/glove.6B.300d.txt"
     # trimmed embeddings (created from glove_filename with build_data.py)
-    # filename_trimmed_entity = "data/enwiki_20180420_300d_entity.npz"
+    filename_trimmed_entity = "data/enwiki_20180420_300d_entity.npz"
     filename_trimmed_word   = "data/enwiki_20180420_300d_word.npz"
 
     filename_entity = "data/enwiki_match_litter.txt"

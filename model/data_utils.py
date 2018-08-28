@@ -451,7 +451,7 @@ def export_trimmed_glove_vectors(vocab, glove_filename, entity_filename, trimmed
             words = line[0]
 
 
-            for word in words:
+            for word in words.split(' '):
                 if word in vocab:
                     idx = vocab[word]
                 else:
@@ -459,6 +459,9 @@ def export_trimmed_glove_vectors(vocab, glove_filename, entity_filename, trimmed
                 embedding += [embeddings[idx]]
             word_idx = vocab["ENTITY/"+words]
             embeddings[word_idx] = np.mean(embedding, axis=0)
+            # if embeddings[word_idx].all() == 0:
+            #     print(embeddings[word_idx])
+
 
     np.savez_compressed(trimmed_filename_word, embeddings=embeddings)
 

@@ -12,6 +12,6 @@ if __name__ == '__main__':
     batch_size = config.batch_size
     for i, (words, labels, masks) in enumerate(minibatches(train, batch_size)):
         print(masks)
-        print(i)
+        break
 
 
