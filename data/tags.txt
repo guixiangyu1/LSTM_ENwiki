@@ -1,5 +1,5 @@
 ORG
-PER
-MISC
 LOC
+MISC
+PER
 O
