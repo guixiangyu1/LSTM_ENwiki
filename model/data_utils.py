@@ -456,8 +456,9 @@ def export_trimmed_glove_vectors(vocab, glove_filename, entity_filename, trimmed
                     idx = vocab[word]
                 else:
                     idx = vocab[UNK]
-                embedding += [embeddings[idx]]
+                embedding.append(embeddings[idx])
             word_idx = vocab["ENTITY/"+words]
+
             embeddings[word_idx] = np.mean(embedding, axis=0)
             # if embeddings[word_idx].all() == 0:
             #     print(embeddings[word_idx])
@@ -529,7 +530,7 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
         if lowercase:
             word = word.lower()
             if word.startswith("entity/"):
-                word.replace("entity/", "ENTITY/")
+                word = word.replace("entity/", "ENTITY/")
         if word.isdigit():
             word = NUM
 
