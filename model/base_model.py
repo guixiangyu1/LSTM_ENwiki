@@ -94,11 +94,11 @@ class BaseModel(object):
         self.logger.info("Initializing tf session")
         self.sess = tf.Session()
         self.sess.run(tf.global_variables_initializer())
-        if indicate == "fine_tuning":
+        if indicate == None:
             vars_restore = [v for v in tf.trainable_variables() if v.name != "words/_word_level_embeddings:0"
                                                                     and v.name != "entity/_entity_embeddings:0"]
             self.saver = tf.train.Saver(vars_restore)
-        else:
+        elif indicate == "fine_tuning":
             self.saver = tf.train.Saver()
 #         self.saver = tf.train.Saver()
 
