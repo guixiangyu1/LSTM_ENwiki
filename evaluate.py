@@ -69,11 +69,11 @@ input> I love Paris""")
 
 def main():
     # create instance of config
-    config = Config("fine_tuning")
+    config = Config()
 
     # build model
     model = NERModel(config)
-    model.build()
+    model.build("fine_tuning")
     # model.build()
     model.restore_session(config.dir_model)
 
