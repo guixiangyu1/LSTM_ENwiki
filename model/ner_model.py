@@ -137,7 +137,7 @@ class NERModel(BaseModel):
             word_embeddings = tf.nn.embedding_lookup(_entity_embeddings,
                     self.word_ids, name="word_embeddings")
 
-        with tf.variable_scope("word"):
+        with tf.variable_scope("words"):
             if self.config.use_word_level_embedding:
                 _word_level_embeddings = tf.Variable(
                     self.config.word_level_embeddings,
